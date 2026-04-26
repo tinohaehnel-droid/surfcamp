@@ -363,24 +363,30 @@ function saveSchnell(){
   if(!d.datum){showFlash('Bitte Datum angeben');return;}
   lsSet(`sc:${d.ts}`,d);
 
-  saveToGoogleSheet({
-    sheet: "Doku",
-    datum: d.datum,
-    uhrzeit: "",
-    spot: d.ort,
-    durchgefuehrt: d.who,
-    teilnehmer: d.tn,
-    zielgruppe: "",
-    kursart: d.wirt,
-    wind: d.wind,
-    wellen: "",
-    temperatur: "",
-    stimmung: d.stimmung,
-    ziel: d.zielErr,
-    lernfortschritt: "",
-    feedback: "",
-    notizen: "Schnelleintrag"
-  });
+saveToGoogleSheet({
+  sheet: "Doku",
+  datum: formData.datum,
+  uhrzeit: formData.uhrzeit,
+  spot: formData.ort,
+  durchgefuehrt: formData.who,
+  teilnehmer: formData.tn,
+  zielgruppe: formData.zg,
+  geschlecht: formData.geschlecht,
+  alter: formData.alter,
+  kursart: formData.wirt,
+  wind: formData.wind,
+  wellen: formData.wellen,
+  temperatur: formData.temperatur,
+  sicht: formData.sicht,
+  stimmung: formData.stimmung,
+  ziel: formData.zielErr,
+  lernfortschritt: formData.lernfort,
+  feedback: formData.feedback,
+  momente: formData.momente,
+  probleme: formData.probleme,
+  wirtschaftlicherWert: formData.wirt,
+  notizen: formData.intern
+});
 
   showFlash('Schnelleintrag gespeichert ✓');
   document.getElementById('s-datum').value=today();
