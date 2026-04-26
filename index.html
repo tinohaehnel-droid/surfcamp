@@ -536,7 +536,6 @@ function saveEquip(k){
     verleihCount:old.verleihCount||0,
     ts
   };
-
   lsSet(k||`eq:${ts}`,data);
 
   saveToGoogleSheet({
@@ -655,10 +654,8 @@ function updateTotal(){const ep=Number(document.getElementById('rn-ep')?.value)|
 function saveRechnung(k){
   const nn=document.getElementById('rn-nn')?.value?.trim();
   if(!nn){showFlash('Bitte Kundenname angeben');return;}
-
   const ts=k?Number(k.split(':')[1]):Date.now();
   const key=k||`rn:${ts}`;
-
   const data={
     rechnungNr:document.getElementById('rn-nr')?.value||`SC-${new Date().getFullYear()}-001`,
     datum:document.getElementById('rn-datum')?.value||today(),
@@ -689,8 +686,8 @@ function saveRechnung(k){
     notizen: data.notizen
   });
 
-showFlash('Rechnung gespeichert ✓');
-renderRechnungList();
+  showFlash('Rechnung gespeichert ✓');
+  renderRechnungList();
 }
 
 function shareRechnung(){
