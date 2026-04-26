@@ -348,6 +348,7 @@ function saveEntry(){
     wirtschaftlicherWert: formData.wirt,
     notizen: formData.intern
   });
+
   showFlash('Eintrag gespeichert ✓');
   initFormData();curSec=0;renderSec();
   setTimeout(()=>switchTab('log'),500);
@@ -392,6 +393,7 @@ saveToGoogleSheet({
     wirtschaftlicherWert: d.wirt,
     notizen: "Schnelleintrag"
   });
+
   showFlash('Schnelleintrag gespeichert ✓');
   document.getElementById('s-datum').value=today();
   document.getElementById('s-tn').value='';
@@ -521,18 +523,31 @@ function saveEquip(k){
   if(!name){showFlash('Bitte Name angeben');return;}
   const old=k?lsGet(k):{};
   const ts=k?Number(k.split(':')[1]):Date.now();
-  const data={name,typ:document.getElementById('eq-typ').value,status:document.getElementById('eq-status').value,seriennummer:document.getElementById('eq-sn').value,kaufdatum:document.getElementById('eq-kauf').value,letzteWartung:document.getElementById('eq-lw').value,naechsteWartung:document.getElementById('eq-nw').value,notizen:document.getElementById('eq-notes').value,einsaetze:old.einsaetze||0,verleihCount:old.verleihCount||0,ts};
-  lsSet(k||`eq:${ts}`,data);
-saveToGoogleSheet({
-  sheet: "Equipment",
-  name: data.name,
-  typ: data.typ,
-  status: data.status,
-  einsaetze: data.einsaetze,
-  letzteWartung: data.letzteWartung,
-  notizen: data.notizen
-});
+  const data={
+    name,
+    typ:document.getElementById('eq-typ').value,
+    status:document.getElementById('eq-status').value,
+    seriennummer:document.getElementById('eq-sn').value,
+    kaufdatum:document.getElementById('eq-kauf').value,
+    letzteWartung:document.getElementById('eq-lw').value,
+    naechsteWartung:document.getElementById('eq-nw').value,
+    notizen:document.getElementById('eq-notes').value,
+    einsaetze:old.einsaetze||0,
+    verleihCount:old.verleihCount||0,
+    ts
+  };
 
+  lsSet(k||`eq:${ts}`,data);
+
+  saveToGoogleSheet({
+    sheet: "Equipment",
+    name: data.name,
+    typ: data.typ,
+    status: data.status,
+    einsaetze: data.einsaetze,
+    letzteWartung: data.letzteWartung,
+    notizen: data.notizen
+  });
 
   showFlash(k?'Gespeichert ✓':'Hinzugefügt ✓');
   renderEquipList();
@@ -640,27 +655,42 @@ function updateTotal(){const ep=Number(document.getElementById('rn-ep')?.value)|
 function saveRechnung(k){
   const nn=document.getElementById('rn-nn')?.value?.trim();
   if(!nn){showFlash('Bitte Kundenname angeben');return;}
+
   const ts=k?Number(k.split(':')[1]):Date.now();
   const key=k||`rn:${ts}`;
-  const data={rechnungNr:document.getElementById('rn-nr')?.value||`SC-${new Date().getFullYear()}-001`,datum:document.getElementById('rn-datum')?.value||today(),kundeVorname:document.getElementById('rn-vn')?.value||'',kundeNachname:nn,kundeAdresse:document.getElementById('rn-adr')?.value||'',kundeEmail:document.getElementById('rn-mail')?.value||'',leistung:document.getElementById('rn-lst')?.value||'',anzahl:document.getElementById('rn-anz')?.value||'1',einzelpreis:document.getElementById('rn-ep')?.value||'0',zahlungsziel:document.getElementById('rn-zz')?.value||'14',notizen:document.getElementById('rn-notiz')?.value||'',bezahlt:k?lsGet(k)?.bezahlt||false:false,ts};
-lsSet(key,data);
 
-saveToGoogleSheet({
-  sheet: "Einnahmen",
-  datum: data.datum,
-  leistung: data.leistung,
-  teilnehmer: data.anzahl,
-  preis: data.einzelpreis,
-  gesamt: Number(data.anzahl) * Number(data.einzelpreis),
-  durchgefuehrt: "",
-  zahlungsart: "",
-  notizen: data.notizen
-});
+  const data={
+    rechnungNr:document.getElementById('rn-nr')?.value||`SC-${new Date().getFullYear()}-001`,
+    datum:document.getElementById('rn-datum')?.value||today(),
+    kundeVorname:document.getElementById('rn-vn')?.value||'',
+    kundeNachname:nn,
+    kundeAdresse:document.getElementById('rn-adr')?.value||'',
+    kundeEmail:document.getElementById('rn-mail')?.value||'',
+    leistung:document.getElementById('rn-lst')?.value||'',
+    anzahl:document.getElementById('rn-anz')?.value||'1',
+    einzelpreis:document.getElementById('rn-ep')?.value||'0',
+    zahlungsziel:document.getElementById('rn-zz')?.value||'14',
+    notizen:document.getElementById('rn-notiz')?.value||'',
+    bezahlt:k?lsGet(k)?.bezahlt||false:false,
+    ts
+  };
 
-showFlash('Rechnung gespeichert ✓');
-renderRechnungList();
+  lsSet(key,data);
 
+  saveToGoogleSheet({
+    sheet: "Einnahmen",
+    datum: data.datum,
+    leistung: data.leistung,
+    teilnehmer: data.anzahl,
+    preis: data.einzelpreis,
+    gesamt: Number(data.anzahl) * Number(data.einzelpreis),
+    durchgefuehrt: "",
+    zahlungsart: "",
+    notizen: data.notizen
+  });
 
+  showFlash('Rechnung gespeichert ✓');
+  renderRechnungList();
 }
 
 function shareRechnung(){
