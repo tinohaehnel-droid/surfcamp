@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black"/>
+<meta name="apple-mobile-web-app-title" content="Surfcamp"/>
+<title>Surfcamp Bornholm</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+body{background:#080a0f;color:#d4cdc4;font-family:Georgia,serif;overscroll-behavior:none;min-height:100vh;}
+input,select,textarea{-webkit-appearance:none;appearance:none;width:100%;background:#0b0d14;border:1px solid #1e2533;border-radius:8px;color:#d4cdc4;padding:10px 12px;font-size:14px;font-family:Georgia,serif;outline:none;box-sizing:border-box;}
+select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%234a5468' d='M6 8L0 0h12z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:32px;}
+select option{background:#0b0d14;color:#d4cdc4;}
+textarea{resize:vertical;min-height:76px;line-height:1.6;}
+button{font-family:Georgia,serif;cursor:pointer;}
+.page{display:none;padding-bottom:80px;}
+.page.active{display:block;}
+.card{background:#0f1117;border:1px solid #1e2533;border-radius:12px;padding:14px 16px;margin-bottom:10px;}
+.field{margin-bottom:16px;}
+.label{display:block;font-size:10px;letter-spacing:1.8px;color:#c9a96e;text-transform:uppercase;margin-bottom:6px;}
+.tag{border-radius:20px;padding:3px 10px;font-size:11px;display:inline-block;}
+.flash{background:#162016;color:#6e9a6e;text-align:center;padding:10px 16px;font-size:13px;position:sticky;top:60px;z-index:9;display:none;}
+.flash.show{display:block;}
+.header{background:#0c0e16;padding:18px 20px 14px;border-bottom:1px solid #1e2533;position:sticky;top:0;z-index:10;}
+.tabs{display:flex;background:#0c0e16;border-bottom:1px solid #1e2533;position:sticky;top:60px;z-index:10;}
+.tab-btn{flex:1;padding:8px 2px;background:none;border:none;border-bottom:2px solid transparent;color:#4a5468;font-size:8.5px;letter-spacing:0.8px;text-transform:uppercase;font-family:Georgia,serif;}
+.tab-btn.active{color:#c9a96e;border-bottom-color:#c9a96e;}
+.tab-icon{font-size:15px;display:block;margin-bottom:2px;}
+.btn{padding:12px 16px;background:#1a2030;border:1px solid #1e2533;border-radius:8px;color:#d4cdc4;font-size:13px;}
+.btn-gold{background:linear-gradient(135deg,#c9a96e,#a07840);border:none;color:#080a0f;font-weight:700;letter-spacing:2px;text-transform:uppercase;width:100%;padding:16px;border-radius:10px;font-size:15px;}
+.btn-green{background:linear-gradient(135deg,#6e9a6e,#4a7a4a);border:none;color:#080a0f;font-weight:700;letter-spacing:2px;text-transform:uppercase;width:100%;padding:16px;border-radius:10px;font-size:15px;}
+.btn-outline{background:#0a1020;border:1px solid #c9a96e;color:#c9a96e;border-radius:8px;padding:12px;font-size:12px;letter-spacing:1.5px;text-transform:uppercase;width:100%;}
+.btn-danger{background:none;border:1px solid #4a1e1e;border-radius:8px;color:#8e4040;font-size:13px;padding:12px;width:100%;}
+.progress-bar{background:#1e2533;border-radius:4px;height:3px;overflow:hidden;margin-top:8px;}
+.progress-fill{background:linear-gradient(90deg,#a07840,#c9a96e);height:3px;transition:width 0.35s;}
+.kpi-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;}
+.kpi-box{background:#0f1117;border:1px solid #1e2533;border-radius:12px;padding:16px 12px;text-align:center;}
+.kpi-val{font-size:26px;font-weight:700;color:#c9a96e;}
+.kpi-label{font-size:10px;color:#4a5468;letter-spacing:1.5px;text-transform:uppercase;margin-top:2px;}
+.entry-card{background:#0f1117;border:1px solid #1e2533;border-radius:12px;padding:14px 16px;margin-bottom:10px;cursor:pointer;}
+.warn-box{background:#1a1208;border:1px solid #3a2a08;border-radius:10px;padding:12px 14px;margin-bottom:14px;}
+.umsatz-box{background:#0c1a0c;border:1px solid #2a4a2a;border-radius:12px;padding:16px;margin-bottom:12px;}
+.rechnung-offen{background:#0f1208;border:1px solid #3a2a0a;border-radius:12px;padding:14px 16px;margin-bottom:10px;cursor:pointer;}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div style="display:flex;align-items:center;justify-content:space-between">
+    <div>
+      <div style="font-size:8px;letter-spacing:3px;color:#4a5468;text-transform:uppercase">Bornholm</div>
+      <div style="font-size:18px;letter-spacing:2px;color:#c9a96e;font-weight:600;line-height:1.1">SURFCAMP</div>
+    </div>
+    <div style="font-size:8px;letter-spacing:1.5px;color:#4a5468;text-transform:uppercase;text-align:right">Dokumentation<br>&amp; Analyse</div>
+  </div>
+</div>
+
+<div class="flash" id="flash"></div>
+
+<div class="tabs">
+  <button class="tab-btn active" onclick="switchTab('neu')"><span class="tab-icon">✚</span>Neu</button>
+  <button class="tab-btn" onclick="switchTab('log')"><span class="tab-icon">☰</span>Log</button>
+  <button class="tab-btn" onclick="switchTab('equip')"><span class="tab-icon">🏄</span>Equip</button>
+  <button class="tab-btn" onclick="switchTab('rechnung')"><span class="tab-icon">🧾</span>Rechnung</button>
+  <button class="tab-btn" onclick="switchTab('analyse')"><span class="tab-icon">◈</span>Analyse</button>
+</div>
+
+<!-- ═══ NEU ═══ -->
+<div id="page-neu" class="page active" style="padding:0">
+  <div style="display:flex;gap:8px;padding:14px 16px 0">
+    <button id="btn-vollst" onclick="setMode('voll')" style="flex:1;padding:10px 8px;border-radius:8px;border:1px solid #c9a96e;background:#14100a;color:#c9a96e;font-size:11px;letter-spacing:1.2px;text-transform:uppercase">📋 Vollständig</button>
+    <button id="btn-schnell" onclick="setMode('schnell')" style="flex:1;padding:10px 8px;border-radius:8px;border:1px solid #1e2533;background:#0b0d14;color:#4a5468;font-size:11px;letter-spacing:1.2px;text-transform:uppercase">⚡ Schnell (60s)</button>
+  </div>
+
+  <!-- Vollständig -->
+  <div id="mode-voll">
+    <div style="padding:16px 16px 8px">
+      <div style="display:flex;justify-content:space-between">
+        <span id="sec-title" style="color:#c9a96e;font-size:14px;font-weight:600">📋 Grunddaten</span>
+        <span id="sec-count" style="color:#4a5468;font-size:12px">1 / 9</span>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" id="progress" style="width:11%"></div></div>
+    </div>
+    <div id="sec-content" style="padding:12px 16px 0"></div>
+    <div style="display:flex;gap:10px;padding:10px 16px 28px" id="sec-nav">
+      <button id="btn-back" onclick="prevSec()" class="btn" style="flex:1;display:none">← Zurück</button>
+      <button id="btn-next" onclick="nextSec()" style="flex:2;padding:12px 16px;background:#192030;border:1px solid #1e2533;border-radius:8px;color:#c9a96e;font-size:13px;font-weight:600;letter-spacing:1px">Weiter →</button>
+    </div>
+  </div>
+
+  <!-- Schnell -->
+  <div id="mode-schnell" style="display:none;padding:16px 16px 28px">
+    <div style="background:#0f1a0a;border:1px solid #2a3a1a;border-radius:10px;padding:10px 14px;margin-bottom:18px">
+      <div style="color:#6e9a6e;font-size:11px;letter-spacing:1.5px;text-transform:uppercase">⚡ Schnelleintrag</div>
+      <div style="color:#4a5468;font-size:12px;margin-top:3px">8 Felder – alles in 60 Sekunden</div>
+    </div>
+    <div class="field"><label class="label">Datum</label><input type="date" id="s-datum"/></div>
+    <div class="field"><label class="label">Ort / Spot</label><select id="s-ort"><option value="Balka Strand">🏄 Balka Strand – Windsurfen & Vermietung</option><option value="Dueodde">🪁 Dueodde – Kitesurfen mit Bjarke</option></select></div>
+    <div class="field"><label class="label">Teilnehmerzahl</label><input type="number" id="s-tn" min="1" placeholder="Anzahl"/></div>
+    <div class="field"><label class="label">Durchgeführt von</label><select id="s-who"><option>Bjarke</option><option>Tino</option></select></div>
+    <div class="field"><label class="label">Wind</label><select id="s-wind"></select></div>
+    <div class="field"><label class="label">Ziel erreicht</label><select id="s-ziel"><option value="ja">Ja ✓</option><option value="teilweise" selected>Teilweise</option><option value="nein">Nein ✗</option></select></div>
+    <div class="field"><label class="label">Stimmung danach</label><select id="s-stimmung"></select></div>
+    <div class="field"><label class="label">Wirtschaftlicher Wert</label><select id="s-wirt"></select></div>
+    <button class="btn-green" onclick="saveSchnell()">⚡ Schnell speichern</button>
+  </div>
+</div>
+
+<!-- ═══ LOG ═══ -->
+<div id="page-log" class="page" style="padding:12px 16px"></div>
+
+<!-- ═══ EQUIP ═══ -->
+<div id="page-equip" class="page" style="padding:12px 16px"></div>
+
+<!-- ═══ RECHNUNG ═══ -->
+<div id="page-rechnung" class="page" style="padding:12px 16px"></div>
+
+<!-- ═══ ANALYSE ═══ -->
+<div id="page-analyse" class="page" style="padding:12px 16px"></div>
+
+<script>
+// ── Data ─────────────────────────────────────────────────────
+const PREISE={"Beginner Kurs":215,"Fortgeschrittener Kurs":65,"Schnorchel Tour":215,"Robben Tour":215,"Vermietung":25};
+const BACKEND_URL = "https://script.google.com/macros/s/AKfycbyoKDL6QAWQWiTUsgM-qAEcsRHxtgDoO7EKPFn_jQGzuYAJbUIo6YMz8mMS_RT3eDAE/exec";
+
+async function saveToGoogleSheet(data) {
+  try {
+    await fetch(BACKEND_URL, {
+      method: "POST",
+      mode: "no-cors",
+      body: JSON.stringify(data)
+    });
+    console.log("Gesendet an Google Sheet");
+  } catch (err) {
+    console.error("Fehler:", err);
+  }
+}
+
+const OPTS={
+  wind:["Kein Wind (0–2 Bft)","Leicht (3–4 Bft)","Mäßig (5–6 Bft)","Frisch (7 Bft)","Stark (8+ Bft)"],
+  wellen:["Flach (0–0.5m)","Klein (0.5–1m)","Mittel (1–1.5m)","Groß (1.5–2m)","Sehr groß (2m+)"],
+  temp:["Kalt (<15°C)","Kühl (15–18°C)","Angenehm (19–22°C)","Warm (23–26°C)","Heiß (27°C+)"],
+  sicht:["Sehr gut","Gut","Mäßig","Schlecht","Neblig"],
+  zg:["Anfänger","Fortgeschrittene","Profis","Kinder (8–12)","Jugendliche (13–17)","Erwachsene (18+)","Senioren (50+)","Gemischte Gruppe","Familie"],
+  geschlecht:["Mann","Frau","Divers","Gemischt"],
+  alter:["Unter 10","10–12","13–15","16–17","18–25","26–35","36–45","46–55","56+"],
+  hauptziel:["Grundlagen Windsurfen lernen","Grundlagen Kitesurfen lernen","Technikverbesserung","Sicherheitstraining","Erlebnistag / Spaß im Fokus","Ausrüstung kennenlernen","Selbstständiges Surfen","Gruppenkoordination stärken","Leistungssteigerung","Erstes Wellenreiten"],
+  nebenziel:["Vertrauen aufbauen","Teamgefühl stärken","Naturerlebnis vermitteln","Sicherheitsbewusstsein schärfen","Folgebuchung anregen","Spaß & Motivation steigern","Keines"],
+  fokus:["Sicherheit","Technik","Erlebnis"],
+  energy:["niedrig","mittel","hoch"],
+  auff:["Keine Auffälligkeiten","Anfängliche Nervosität","Übermut / Risikobereitschaft","Konzentrationsprobleme","Starke Lernmotivation","Gruppenführer sichtbar","Einzelgänger in der Gruppe","Angst vor dem Wasser","Konkurrenzdenken","Sehr ruhige Gruppe"],
+  gruppen:["Sehr harmonisch und motiviert","Gut – kleine Reibungen normal","Gemischt – unterschiedliche Levels","Angespannt – Konkurrenzdenken","Ruhig und fokussiert","Laut und energiegeladen"],
+  mf:["Ausgewogen","Männer dominierend","Frauen dominierend","Nur Männer","Nur Frauen","Keine nennenswerte Dynamik"],
+  hauptteil:["Wassertraining mit Einzel-Feedback","Gruppenübungen am Strand","Freies Surfen mit Beobachtung","Techniktraining (spezifisch)","Sicherheitsmanöver üben","Ausrüstungskunde & Rigging","Video-Analyse & Besprechung","Slalom & Kurventraining"],
+  abschluss:["Gemeinsame Reflexionsrunde","Einzelfeedback an jeden TN","Kurze Gruppenauswertung am Strand","Ausrüstung verräumen & Debriefing","Freies Ausklingen im Wasser"],
+  stimmung:["Begeistert & energiegeladen","Zufrieden & entspannt","Erschöpft aber glücklich","Motiviert für mehr","Gemischt","Enttäuscht"],
+  lernfort:["Deutlicher Fortschritt sichtbar","Leichter Fortschritt erkennbar","Auf gleichem Level geblieben","Durchbruch bei mehreren TN","Rückschritte bei einzelnen"],
+  fragen:["Wann kann ich alleine surfen?","Welche Ausrüstung soll ich kaufen?","Gibt es weitere Kurse?","Wie lange brauche ich zum Lernen?","Ist es gefährlich?","Wo kann ich sonst surfen?","Kann ich Ausrüstung mieten?"],
+  erfolg:["Gute Windverhältnisse","Kleine Gruppengröße","Hohe Eigenmotivation","Klare Kommunikation","Individuelles Feedback","Optimale Ausrüstung","Gute Stimmung im Team"],
+  muster:["Anfänger überschätzen sich anfangs","Frauen hören besser auf Anweisungen","Männer sind risikofreudiger","Nachmittags sinkt die Konzentration","Kleine Gruppen lernen schneller","Erster Wellenritt als emotionaler Höhepunkt"],
+  wirt:["Beginner Kurs","Fortgeschrittener Kurs","Schnorchel Tour","Robben Tour","Vermietung"],
+  relevanz:["Kursformat wiederholen","Angebot ausbauen","Neue Zielgruppe erschlossen","Marketingpotenzial (Fotos/Zitate)","Kooperation vertiefen","Kein direkter Mehrwert"],
+  eqtyp:["Windsurf-Board","Kite-Board","Kite","Segel","Mast","Boom","Trapez","Neoprenanzug","Helm","Schwimmweste","Paddel","Schnorchelset","Sonstiges"],
+  eqstatus:[["verfügbar","✓ Verfügbar"],["im_einsatz","⚡ Im Einsatz"],["wartung","🔧 Wartung fällig"],["defekt","✗ Defekt"],["verliehen","↗ Verliehen"]],
+};
+const SC={"verfügbar":"#6e9a6e","im_einsatz":"#c9a96e","wartung":"#c9a06e","defekt":"#9e6060","verliehen":"#4a7c9e"};
+const SB={"verfügbar":"#0f1f0f","im_einsatz":"#1a1408","wartung":"#1a1208","defekt":"#1a0f0f","verliehen":"#0a1220"};
+const SECS=[
+  {title:"📋 Grunddaten"},
+  {title:"🎯 Ziel der Einheit"},
+  {title:"👥 Zielgruppen-Analyse"},
+  {title:"🏄 Ablauf"},
+  {title:"✨ Ergebnis & Wirkung"},
+  {title:"📊 Datensammlung"},
+  {title:"📈 Nachweis / Saison"},
+  {title:"🔍 Reflexion"},
+  {title:"✍️ Unterschrift"},
+];
+
+let curSec=0;
+let formMode='voll';
+
+function today(){return new Date().toISOString().split('T')[0];}
+function selOpts(opts,sel=''){return opts.map(o=>Array.isArray(o)?`<option value="${o[0]}"${o[0]===sel?' selected':''}>${o[1]}</option>`:`<option${o===sel?' selected':''}>${o}</option>`).join('');}
+function fld(id,label,content){return `<div class="field"><label class="label">${label}</label>${content}</div>`;}
+function inp(id,type='text',val='',ph=''){return `<input type="${type}" id="${id}" value="${escHtml(val)}" placeholder="${ph}">`;}
+function ta(id,val='',ph=''){return `<textarea id="${id}" placeholder="${ph}">${escHtml(val)}</textarea>`;}
+function sel(id,opts,val=''){return `<select id="${id}">${selOpts(opts,val)}</select>`;}
+function escHtml(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+
+// ── Storage ───────────────────────────────────────────────────
+function lsSet(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch{}}
+function lsGet(k){try{const v=localStorage.getItem(k);return v?JSON.parse(v):null;}catch{return null;}}
+function lsDel(k){try{localStorage.removeItem(k);}catch{}}
+function lsList(prefix){return Object.keys(localStorage).filter(k=>k.startsWith(prefix));}
+function loadAll(prefix){return lsList(prefix).map(k=>({_k:k,...lsGet(k)})).sort((a,b)=>(b.ts||0)-(a.ts||0));}
+
+// ── Flash ─────────────────────────────────────────────────────
+let flashTimer;
+function showFlash(msg){const el=document.getElementById('flash');el.textContent=msg;el.classList.add('show');clearTimeout(flashTimer);flashTimer=setTimeout(()=>el.classList.remove('show'),3000);}
+
+// ── Tabs ──────────────────────────────────────────────────────
+function switchTab(t){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('page-'+t).classList.add('active');
+  document.querySelectorAll('.tab-btn')[['neu','log','equip','rechnung','analyse'].indexOf(t)].classList.add('active');
+  if(t==='log')renderLog();
+  if(t==='equip')renderEquipList();
+  if(t==='rechnung')renderRechnungList();
+  if(t==='analyse')renderAnalyse();
+}
+
+// ── Mode toggle ───────────────────────────────────────────────
+function setMode(m){
+  formMode=m;
+  document.getElementById('mode-voll').style.display=m==='voll'?'block':'none';
+  document.getElementById('mode-schnell').style.display=m==='schnell'?'block':'none';
+  document.getElementById('btn-vollst').style.borderColor=m==='voll'?'#c9a96e':'#1e2533';
+  document.getElementById('btn-vollst').style.background=m==='voll'?'#14100a':'#0b0d14';
+  document.getElementById('btn-vollst').style.color=m==='voll'?'#c9a96e':'#4a5468';
+  document.getElementById('btn-schnell').style.borderColor=m==='schnell'?'#c9a96e':'#1e2533';
+  document.getElementById('btn-schnell').style.background=m==='schnell'?'#14100a':'#0b0d14';
+  document.getElementById('btn-schnell').style.color=m==='schnell'?'#c9a96e':'#4a5468';
+  if(m==='schnell') initSchnell();
+}
+
+function initSchnell(){
+  const sw=document.getElementById('s-wind'); if(sw)sw.innerHTML=selOpts(OPTS.wind,"Mäßig (5–6 Bft)");
+  const ss=document.getElementById('s-stimmung'); if(ss)ss.innerHTML=selOpts(OPTS.stimmung,"Zufrieden & entspannt");
+  const sw2=document.getElementById('s-wirt'); if(sw2)sw2.innerHTML=selOpts(OPTS.wirt,"Beginner Kurs");
+  const sd=document.getElementById('s-datum'); if(sd)sd.value=today();
+}
+
+// ── Form sections ─────────────────────────────────────────────
+let formData={};
+function initFormData(){formData={datum:today(),uhrzeit:'',ort:'Balka Strand',wind:'Mäßig (5–6 Bft)',wellen:'Klein (0.5–1m)',temperatur:'Angenehm (19–22°C)',sicht:'Gut',tn:'',zg:'Anfänger',geschlecht:'Mann',alter:'18–25',who:'Bjarke',hauptziel:'Grundlagen Windsurfen lernen',nebenziel:'Vertrauen aufbauen',fokus:'Technik',motivation:'',energy:'mittel',auff:'Keine Auffälligkeiten',gruppen:'Sehr harmonisch und motiviert',mf:'Ausgewogen',unaus:'',einstieg:'',hauptteil:'Wassertraining mit Einzel-Feedback',abschluss:'Gemeinsame Reflexionsrunde',anpass:'',zielErr:'teilweise',stimmung:'Zufrieden & entspannt',lernfort:'Leichter Fortschritt erkennbar',momente:'',feedback:'',fragen:'Wann kann ich alleine surfen?',probleme:'',erfolg:'Gute Windverhältnisse',muster:'Anfänger überschätzen sich anfangs',besond:'',verbess:'',wirt:'Beginner Kurs',relevanz:'Kursformat wiederholen',stark:'',unnoetig:'',sofort:'',ausbauen:'',durchf:'Bjarke',tnSig:'',intern:''};}
+
+function saveCurrentSec(){
+  const ids=['datum','uhrzeit','ort','wind','wellen','temperatur','sicht','tn','zg','geschlecht','alter','who','hauptziel','nebenziel','fokus','motivation','energy','auff','gruppen','mf','unaus','einstieg','hauptteil','abschluss','anpass','zielErr','stimmung','lernfort','momente','feedback','fragen','probleme','erfolg','muster','besond','verbess','wirt','relevanz','stark','unnoetig','sofort','ausbauen','durchf','tnSig','intern'];
+  ids.forEach(id=>{const el=document.getElementById('fd-'+id);if(el)formData[id]=el.value;});
+}
+
+function secHTML(){
+  const d=formData;
+  const sections=[
+    // 0 Grunddaten
+    `${fld('fd-datum','Datum',`<input type="date" id="fd-datum" value="${d.datum}">`)}
+     ${fld('fd-uhrzeit','Uhrzeit',`<input type="time" id="fd-uhrzeit" value="${d.uhrzeit}">`)}
+     ${fld('fd-ort','Ort / Spot',`<select id="fd-ort"><option value="Balka Strand"${d.ort==='Balka Strand'?' selected':''}>🏄 Balka Strand – Windsurfen & Vermietung</option><option value="Dueodde"${d.ort==='Dueodde'?' selected':''}>🪁 Dueodde – Kitesurfen mit Bjarke</option></select>`)}
+     <button onclick="fetchWeather()" id="wx-btn" style="width:100%;padding:11px;margin-bottom:16px;border:1px solid #c9a96e;border-radius:8px;background:#0f1a0f;color:#c9a96e;font-size:12px;letter-spacing:1.5px;text-transform:uppercase">🌤 Aktuelles Wetter laden</button>
+     ${fld('fd-wind','Wind',`<select id="fd-wind">${selOpts(OPTS.wind,d.wind)}</select>`)}
+     ${fld('fd-wellen','Wellen',`<select id="fd-wellen">${selOpts(OPTS.wellen,d.wellen)}</select>`)}
+     ${fld('fd-temperatur','Temperatur',`<select id="fd-temperatur">${selOpts(OPTS.temp,d.temperatur)}</select>`)}
+     ${fld('fd-sicht','Sicht',`<select id="fd-sicht">${selOpts(OPTS.sicht,d.sicht)}</select>`)}
+     ${fld('fd-tn','Teilnehmerzahl',`<input type="number" id="fd-tn" value="${d.tn}" min="1">`)}
+     ${fld('fd-zg','Zielgruppe (ZG)',`<select id="fd-zg">${selOpts(OPTS.zg,d.zg)}</select>`)}
+     ${fld('fd-geschlecht','Geschlecht',`<select id="fd-geschlecht">${selOpts(OPTS.geschlecht,d.geschlecht)}</select>`)}
+     ${fld('fd-alter','Alter',`<select id="fd-alter">${selOpts(OPTS.alter,d.alter)}</select>`)}
+     ${fld('fd-who','Durchgeführt von',`<select id="fd-who"><option${d.who==='Bjarke'?' selected':''}>Bjarke</option><option${d.who==='Tino'?' selected':''}>Tino</option></select>`)}`,
+    // 1 Ziel
+    `${fld('fd-hauptziel','Hauptziel',`<select id="fd-hauptziel">${selOpts(OPTS.hauptziel,d.hauptziel)}</select>`)}
+     ${fld('fd-nebenziel','Nebenziel',`<select id="fd-nebenziel">${selOpts(OPTS.nebenziel,d.nebenziel)}</select>`)}
+     ${fld('fd-fokus','Fokus',`<select id="fd-fokus">${selOpts(OPTS.fokus,d.fokus)}</select>`)}`,
+    // 2 ZG-Analyse
+    `${fld('fd-motivation','Motivation',`<textarea id="fd-motivation" placeholder="Freitext...">${escHtml(d.motivation)}</textarea>`)}
+     ${fld('fd-energy','Energielevel',`<select id="fd-energy">${selOpts(OPTS.energy,d.energy)}</select>`)}
+     ${fld('fd-auff','Auffälligkeiten',`<select id="fd-auff">${selOpts(OPTS.auff,d.auff)}</select>`)}
+     ${fld('fd-gruppen','Gruppendynamik',`<select id="fd-gruppen">${selOpts(OPTS.gruppen,d.gruppen)}</select>`)}
+     ${fld('fd-mf','Männer / Frauen Dynamik',`<select id="fd-mf">${selOpts(OPTS.mf,d.mf)}</select>`)}
+     ${fld('fd-unaus','Unausgesprochene Bedürfnisse',`<textarea id="fd-unaus" placeholder="Freitext...">${escHtml(d.unaus)}</textarea>`)}`,
+    // 3 Ablauf
+    `${fld('fd-einstieg','Einstieg',`<textarea id="fd-einstieg" placeholder="Wie wurde gestartet?">${escHtml(d.einstieg)}</textarea>`)}
+     ${fld('fd-hauptteil','Hauptteil',`<select id="fd-hauptteil">${selOpts(OPTS.hauptteil,d.hauptteil)}</select>`)}
+     ${fld('fd-abschluss','Abschluss',`<select id="fd-abschluss">${selOpts(OPTS.abschluss,d.abschluss)}</select>`)}
+     ${fld('fd-anpass','Spontane Anpassungen',`<textarea id="fd-anpass" placeholder="Was wurde geändert?">${escHtml(d.anpass)}</textarea>`)}`,
+    // 4 Ergebnis
+    `${fld('fd-zielErr','Ziel erreicht',`<select id="fd-zielErr"><option value="ja"${d.zielErr==='ja'?' selected':''}>Ja ✓</option><option value="teilweise"${d.zielErr==='teilweise'?' selected':''}>Teilweise</option><option value="nein"${d.zielErr==='nein'?' selected':''}>Nein ✗</option></select>`)}
+     ${fld('fd-stimmung','Stimmung danach',`<select id="fd-stimmung">${selOpts(OPTS.stimmung,d.stimmung)}</select>`)}
+     ${fld('fd-lernfort','Lernfortschritt',`<select id="fd-lernfort">${selOpts(OPTS.lernfort,d.lernfort)}</select>`)}
+     ${fld('fd-momente','Besondere Momente',`<textarea id="fd-momente" placeholder="Was war besonders?">${escHtml(d.momente)}</textarea>`)}`,
+    // 5 Daten
+    `${fld('fd-feedback','Teilnehmer Feedback (Zitate!)',`<textarea id="fd-feedback" style="min-height:110px" placeholder='"Das war der beste Tag…"'>${escHtml(d.feedback)}</textarea>`)}
+     ${fld('fd-fragen','Häufige Fragen',`<select id="fd-fragen">${selOpts(OPTS.fragen,d.fragen)}</select>`)}
+     ${fld('fd-probleme','Probleme / Hindernisse',`<textarea id="fd-probleme" placeholder="Freitext...">${escHtml(d.probleme)}</textarea>`)}
+     ${fld('fd-erfolg','Erfolgsfaktoren',`<select id="fd-erfolg">${selOpts(OPTS.erfolg,d.erfolg)}</select>`)}
+     ${fld('fd-muster','Wiederkehrende Muster',`<select id="fd-muster">${selOpts(OPTS.muster,d.muster)}</select>`)}`,
+    // 6 Nachweis
+    `${fld('fd-besond','Besonderheiten',`<textarea id="fd-besond" placeholder="Freitext...">${escHtml(d.besond)}</textarea>`)}
+     ${fld('fd-verbess','Verbesserungspotenzial',`<textarea id="fd-verbess" placeholder="Freitext...">${escHtml(d.verbess)}</textarea>`)}
+     ${fld('fd-wirt','Wirtschaftlicher Wert',`<select id="fd-wirt">${selOpts(OPTS.wirt,d.wirt)}</select>`)}
+     ${fld('fd-relevanz','Relevanz für Zukunft',`<select id="fd-relevanz">${selOpts(OPTS.relevanz,d.relevanz)}</select>`)}`,
+    // 7 Reflexion
+    `${fld('fd-stark','Was lief stark?',`<textarea id="fd-stark" placeholder="Freitext...">${escHtml(d.stark)}</textarea>`)}
+     ${fld('fd-unnoetig','Was war unnötig?',`<textarea id="fd-unnoetig" placeholder="Freitext...">${escHtml(d.unnoetig)}</textarea>`)}
+     ${fld('fd-sofort','Was ändern wir sofort?',`<textarea id="fd-sofort" placeholder="Freitext...">${escHtml(d.sofort)}</textarea>`)}
+     ${fld('fd-ausbauen','Was bauen wir aus?',`<textarea id="fd-ausbauen" placeholder="Freitext...">${escHtml(d.ausbauen)}</textarea>`)}`,
+    // 8 Unterschrift
+    `${fld('fd-durchf','Durchführender',`<select id="fd-durchf"><option${d.durchf==='Bjarke'?' selected':''}>Bjarke</option><option${d.durchf==='Tino'?' selected':''}>Tino</option></select>`)}
+     ${fld('fd-tnSig','Teilnehmer (optional)',`<input id="fd-tnSig" value="${escHtml(d.tnSig)}" placeholder="Name...">`)}
+     ${fld('fd-intern','Intern / Team',`<input id="fd-intern" value="${escHtml(d.intern)}" placeholder="Notiz...">`)}
+     <button class="btn-gold" onclick="saveEntry()">Eintrag speichern</button>`,
+  ];
+  return sections[curSec];
+}
+
+function renderSec(){
+  document.getElementById('sec-content').innerHTML=secHTML();
+  document.getElementById('sec-title').textContent=SECS[curSec].title;
+  document.getElementById('sec-count').textContent=`${curSec+1} / ${SECS.length}`;
+  document.getElementById('progress').style.width=`${((curSec+1)/SECS.length)*100}%`;
+  document.getElementById('btn-back').style.display=curSec>0?'block':'none';
+  document.getElementById('btn-next').style.display=curSec<8?'block':'none';
+}
+
+function nextSec(){saveCurrentSec();if(curSec<8){curSec++;renderSec();}}
+function prevSec(){saveCurrentSec();if(curSec>0){curSec--;renderSec();}}
+
+function saveEntry(){
+  saveCurrentSec();
+  if(!formData.datum){showFlash('Bitte Datum angeben');return;}
+  const ts=Date.now();
+  lsSet(`sc:${ts}`,{...formData,ts});
+
+  saveToGoogleSheet({
+    sheet: "Doku",
+    datum: formData.datum,
+    uhrzeit: formData.uhrzeit,
+    spot: formData.ort,
+    durchgefuehrt: formData.who,
+    teilnehmer: formData.tn,
+    zielgruppe: formData.zg,
+    kursart: formData.wirt,
+    wind: formData.wind,
+    wellen: formData.wellen,
+    temperatur: formData.temperatur,
+    stimmung: formData.stimmung,
+    ziel: formData.zielErr,
+    lernfortschritt: formData.lernfort,
+    feedback: formData.feedback,
+    notizen: formData.intern
+  });
+
+  showFlash('Eintrag gespeichert ✓');
+  initFormData();curSec=0;renderSec();
+  setTimeout(()=>switchTab('log'),500);
+}
+
+function saveSchnell(){
+  const d={
+    datum:document.getElementById('s-datum').value,
+    ort:document.getElementById('s-ort').value,
+    tn:document.getElementById('s-tn').value,
+    who:document.getElementById('s-who').value,
+    wind:document.getElementById('s-wind').value,
+    zielErr:document.getElementById('s-ziel').value,
+    stimmung:document.getElementById('s-stimmung').value,
+    wirt:document.getElementById('s-wirt').value,
+    ts:Date.now()
+  };
+  if(!d.datum){showFlash('Bitte Datum angeben');return;}
+  lsSet(`sc:${d.ts}`,d);
+
+  saveToGoogleSheet({
+    sheet: "Doku",
+    datum: d.datum,
+    uhrzeit: "",
+    spot: d.ort,
+    durchgefuehrt: d.who,
+    teilnehmer: d.tn,
+    zielgruppe: "",
+    kursart: d.wirt,
+    wind: d.wind,
+    wellen: "",
+    temperatur: "",
+    stimmung: d.stimmung,
+    ziel: d.zielErr,
+    lernfortschritt: "",
+    feedback: "",
+    notizen: "Schnelleintrag"
+  });
+
+  showFlash('Schnelleintrag gespeichert ✓');
+  document.getElementById('s-datum').value=today();
+  document.getElementById('s-tn').value='';
+  setTimeout(()=>switchTab('log'),500);
+}
+
+async function fetchWeather(){
+  const btn=document.getElementById('wx-btn');
+  if(!btn)return;
+  btn.textContent='⏳ Laden…';btn.style.color='#4a5468';
+  const ort=document.getElementById('fd-ort')?.value||'Balka Strand';
+  const lat=ort==='Dueodde'?54.99:55.03, lon=ort==='Dueodde'?15.08:15.05;
+  try{
+    const[wRes,mRes]=await Promise.all([
+      fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,wind_speed_10m,visibility&wind_speed_unit=ms&forecast_days=1`),
+      fetch(`https://marine-api.open-meteo.com/v1/marine?latitude=${lat}&longitude=${lon}&current=wave_height&forecast_days=1`)
+    ]);
+    const wd=await wRes.json(),md=await mRes.json();
+    const ws=wd.current.wind_speed_10m,tmp=wd.current.temperature_2m,vis=wd.current.visibility,wh=md.current.wave_height;
+    const windVal=ws<1.5?'Kein Wind (0–2 Bft)':ws<5.5?'Leicht (3–4 Bft)':ws<8?'Mäßig (5–6 Bft)':ws<10.8?'Frisch (7 Bft)':'Stark (8+ Bft)';
+    const wellenVal=wh<0.5?'Flach (0–0.5m)':wh<1?'Klein (0.5–1m)':wh<1.5?'Mittel (1–1.5m)':wh<2?'Groß (1.5–2m)':'Sehr groß (2m+)';
+    const tempVal=tmp<15?'Kalt (<15°C)':tmp<19?'Kühl (15–18°C)':tmp<23?'Angenehm (19–22°C)':tmp<27?'Warm (23–26°C)':'Heiß (27°C+)';
+    const sichtVal=vis>10000?'Sehr gut':vis>5000?'Gut':vis>2000?'Mäßig':vis>500?'Schlecht':'Neblig';
+    const setVal=(id,v)=>{const el=document.getElementById(id);if(el){Array.from(el.options).forEach(o=>{o.selected=o.value===v||o.text===v;});}};
+    setVal('fd-wind',windVal);setVal('fd-wellen',wellenVal);setVal('fd-temperatur',tempVal);setVal('fd-sicht',sichtVal);
+    showFlash('Wetterdaten geladen ✓');
+  }catch{showFlash('Wetter nicht verfügbar');}
+  if(btn){btn.textContent='🌤 Aktuelles Wetter laden';btn.style.color='#c9a96e';}
+}
+
+// ── LOG ───────────────────────────────────────────────────────
+function renderLog(){
+  const entries=loadAll('sc:');
+  const el=document.getElementById('page-log');
+  if(!entries.length){el.innerHTML=`<div style="text-align:center;padding:60px 20px;color:#4a5468"><div style="font-size:44px;margin-bottom:12px">🌊</div><div>Noch keine Einträge</div></div>`;return;}
+  el.innerHTML=`<div style="color:#4a5468;font-size:11px;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:12px">${entries.length} Eintrag${entries.length!==1?'e':''}</div>`+
+  entries.map(e=>{
+    const ec=e.energy==='hoch'||e.energielevel==='hoch'?'#2a3d20':e.energy==='niedrig'||e.energielevel==='niedrig'?'#3a1e1e':'#1a2535';
+    const et=e.energy==='hoch'||e.energielevel==='hoch'?'#6e9a6e':e.energy==='niedrig'||e.energielevel==='niedrig'?'#9e6060':'#c9a96e';
+    const ziel=e.zielErr||e.zielErreicht;
+    const wirt=e.wirt||e.wirtschaftlicherWert;
+    const ort=e.ort||'–';
+    const icon=ort==='Dueodde'?'🪁':'🏄';
+    return `<div class="entry-card" onclick="showEntry('${e._k}')">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start">
+        <div><div style="color:#c9a96e;font-size:15px;font-weight:600">${e.datum||'–'}</div>
+        <div style="color:#4a5468;font-size:12px;margin-top:2px">${icon} ${ort}${e.uhrzeit?` · ${e.uhrzeit}`:''}</div>
+        ${e.wind?`<div style="color:#2a3a4a;font-size:11px;margin-top:2px">💨 ${e.wind}${e.wellen?` · 🌊 ${e.wellen}`:''}</div>`:''}
+        </div>
+        <div style="text-align:right">
+          ${e.energy||e.energielevel?`<span style="background:${ec};color:${et};border-radius:20px;padding:3px 10px;font-size:11px">${e.energy||e.energielevel}</span>`:''}
+          ${e.tn||e.teilnehmerzahl?`<div style="color:#4a5468;font-size:11px;margin-top:4px">${e.tn||e.teilnehmerzahl} TN</div>`:''}
+        </div>
+      </div>
+      ${e.hauptziel?`<div style="color:#3a4a5a;font-size:12px;margin-top:8px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">🎯 ${e.hauptziel}</div>`:''}
+      <div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap">
+        ${ziel?`<span class="tag" style="background:${ziel==='ja'?'#6e9a6e22':ziel==='nein'?'#9e606022':'#c9a96e22'};color:${ziel==='ja'?'#6e9a6e':ziel==='nein'?'#9e6060':'#c9a96e'}">${ziel==='ja'?'Ziel erreicht':ziel==='nein'?'Nicht erreicht':'Teilweise'}</span>`:''}
+        ${wirt?`<span class="tag" style="background:#4a546822;color:#4a5468">${wirt}</span>`:''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function showEntry(k){
+  const e=lsGet(k);if(!e)return;
+  const fields=[['Datum',e.datum],['Uhrzeit',e.uhrzeit],['Spot',e.ort],['Wind',e.wind],['Wellen',e.wellen],['Temperatur',e.temperatur||e.temp],['Sicht',e.sicht],['Teilnehmer',e.tn||e.teilnehmerzahl],['Zielgruppe',e.zg||e.zielgruppe],['Geschlecht',e.geschlecht],['Alter',e.alter],['Durchgeführt von',e.who||e.durchgefuehrtVon],['Hauptziel',e.hauptziel],['Fokus',e.fokus],['Energielevel',e.energy||e.energielevel],['Gruppendynamik',e.gruppen||e.gruppendynamik],['Hauptteil',e.hauptteil],['Ziel erreicht',e.zielErr||e.zielErreicht],['Stimmung',e.stimmung],['Lernfortschritt',e.lernfort||e.lernfortschritt],['Besondere Momente',e.momente||e.besondereMomente],['Feedback',e.feedback],['Wirtschaftl. Wert',e.wirt||e.wirtschaftlicherWert],['Reflexion stark',e.stark||e.starkLief]].filter(([,v])=>v);
+  const umsatz=(PREISE[e.wirt||e.wirtschaftlicherWert]||0)*Number(e.tn||e.teilnehmerzahl||0);
+  const el=document.getElementById('page-log');
+  el.innerHTML=`
+    <button onclick="renderLog()" class="btn" style="margin-bottom:12px;padding:8px 16px">← Zurück</button>
+    <button onclick="rechnungFromEntry('${k}')" class="btn-outline" style="margin-bottom:12px">🧾 Rechnung erstellen</button>
+    <div class="card" style="margin-bottom:12px">
+      ${fields.map(([l,v])=>`<div style="margin-bottom:12px;padding-bottom:12px;border-bottom:1px solid #1e2533"><div style="font-size:10px;color:#c9a96e;letter-spacing:1.8px;text-transform:uppercase;margin-bottom:3px">${l}</div><div style="font-size:13px;color:#d4cdc4;line-height:1.6">${escHtml(v)}</div></div>`).join('')}
+      ${umsatz?`<div style="font-size:13px;color:#6e9a6e;font-weight:600">Umsatz geschätzt: ${umsatz} €</div>`:''}
+    </div>
+    <button onclick="if(confirm('Wirklich löschen?'))deleteEntry('${k}')" class="btn-danger">Eintrag löschen</button>`;
+}
+
+function deleteEntry(k){lsDel(k);showFlash('Gelöscht');renderLog();}
+
+function rechnungFromEntry(k){
+  const e=lsGet(k);if(!e)return;
+  pendingRechnung={leistung:e.wirt||e.wirtschaftlicherWert||'Beginner Kurs',anzahl:String(e.tn||e.teilnehmerzahl||1),einzelpreis:String(PREISE[e.wirt||e.wirtschaftlicherWert]||215),datum:e.datum||today()};
+  switchTab('rechnung');
+  setTimeout(()=>showRechnungForm(),100);
+}
+
+// ── EQUIP ─────────────────────────────────────────────────────
+function renderEquipList(filter='alle'){
+  const items=loadAll('eq:');
+  const warn=items.filter(i=>i.status==='wartung'||i.status==='defekt');
+  const filtered=filter==='alle'?items:items.filter(i=>i.status===filter);
+  const el=document.getElementById('page-equip');
+  const ok=items.filter(i=>i.status==='verfügbar').length;
+  el.innerHTML=`
+    ${warn.length?`<div class="warn-box"><div style="color:#c9a06e;font-size:11px;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:6px">⚠ Wartung / Defekt</div>${warn.map(i=>`<div onclick="showEquip('${i._k}')" style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid #2a2008;cursor:pointer"><span style="font-size:13px">${escHtml(i.name)}</span><span class="tag" style="background:${SC[i.status]||'#c9a96e'}22;color:${SC[i.status]||'#c9a96e'}">${OPTS.eqstatus.find(s=>s[0]===i.status)?.[1]||i.status}</span></div>`).join('')}</div>`:''}
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:14px">
+      ${[['📦','Gesamt',items.length],['✓','Verfügbar',ok],['⚠','Wartung',warn.length]].map(([ic,l,v])=>`<div class="kpi-box" style="padding:12px 8px"><div style="font-size:18px;margin-bottom:2px">${ic}</div><div style="font-size:22px;font-weight:700;color:#c9a96e">${v}</div><div style="font-size:9px;color:#4a5468;letter-spacing:1.2px;text-transform:uppercase;margin-top:1px">${l}</div></div>`).join('')}
+    </div>
+    <div style="display:flex;gap:6px;margin-bottom:14px;overflow-x:auto;padding-bottom:4px">
+      ${[['alle','Alle'],...OPTS.eqstatus].map(f=>Array.isArray(f)?`<button onclick="renderEquipList('${f[0]}')" style="flex-shrink:0;padding:6px 12px;border-radius:20px;border:1px solid ${filter===f[0]?'#c9a96e':'#1e2533'};background:${filter===f[0]?'#14100a':'#0b0d14'};color:${filter===f[0]?'#c9a96e':'#4a5468'};font-size:11px;white-space:nowrap;font-family:Georgia,serif">${f[1]}</button>`:`<button onclick="renderEquipList('${f[0]}')" style="flex-shrink:0;padding:6px 12px;border-radius:20px;border:1px solid ${filter===f[0]?'#c9a96e':'#1e2533'};background:${filter===f[0]?'#14100a':'#0b0d14'};color:${filter===f[0]?'#c9a96e':'#4a5468'};font-size:11px;white-space:nowrap;font-family:Georgia,serif">${f[1]}</button>`).join('')}
+    </div>
+    <button onclick="showEquipForm()" class="btn-outline" style="margin-bottom:14px">+ Ausrüstung hinzufügen</button>
+    ${filtered.length===0?'<div style="text-align:center;padding:40px 20px;color:#4a5468;font-size:13px">Keine Ausrüstung gefunden</div>':''}
+    ${filtered.map(i=>{const sc=SC[i.status]||'#c9a96e';const sb=SB[i.status]||'#0f1117';return`<div onclick="showEquip('${i._k}')" style="background:${sb};border:1px solid ${sc}33;border-radius:12px;padding:14px 16px;margin-bottom:10px;cursor:pointer"><div style="display:flex;justify-content:space-between;align-items:flex-start"><div><div style="font-size:15px;font-weight:600">${escHtml(i.name)}</div><div style="color:#4a5468;font-size:12px;margin-top:2px">${i.typ}</div></div><span class="tag" style="background:${sc}22;color:${sc};white-space:nowrap">${OPTS.eqstatus.find(s=>s[0]===i.status)?.[1]||i.status}</span></div><div style="display:flex;gap:14px;margin-top:10px">${i.einsaetze?`<span style="font-size:11px;color:#4a5468">🔧 ${i.einsaetze}× eingesetzt</span>`:''}</div></div>`;}).join('')}`;
+}
+
+function showEquipForm(k){
+  const e=k?lsGet(k):{};
+  const el=document.getElementById('page-equip');
+  el.innerHTML=`
+    <button onclick="renderEquipList()" class="btn" style="margin-bottom:16px;padding:8px 16px">← Zurück</button>
+    <div style="font-size:14px;color:#c9a96e;font-weight:600;margin-bottom:16px">${k?'Bearbeiten':'Neue Ausrüstung'}</div>
+    ${fld('eq-name','Name *',`<input id="eq-name" value="${escHtml(e.name||'')}" placeholder="z.B. JP Freestyle 100L">`)}
+    ${fld('eq-typ','Typ',`<select id="eq-typ">${selOpts(OPTS.eqtyp,e.typ||'Windsurf-Board')}</select>`)}
+    ${fld('eq-status','Status',`<select id="eq-status">${OPTS.eqstatus.map(s=>`<option value="${s[0]}"${(e.status||'verfügbar')===s[0]?' selected':''}>${s[1]}</option>`).join('')}</select>`)}
+    ${fld('eq-sn','Seriennummer',`<input id="eq-sn" value="${escHtml(e.seriennummer||'')}" placeholder="Optional">`)}
+    ${fld('eq-kauf','Kaufdatum',`<input type="date" id="eq-kauf" value="${e.kaufdatum||''}">`)}
+    ${fld('eq-lw','Letzte Wartung',`<input type="date" id="eq-lw" value="${e.letzteWartung||''}">`)}
+    ${fld('eq-nw','Nächste Wartung',`<input type="date" id="eq-nw" value="${e.naechsteWartung||''}">`)}
+    ${fld('eq-notes','Notizen',`<textarea id="eq-notes" placeholder="Zustand...">${escHtml(e.notizen||'')}</textarea>`)}
+    <button class="btn-gold" onclick="saveEquip(${k?`'${k}'`:'null'})">${k?'Änderungen speichern':'Hinzufügen'}</button>`;
+}
+
+function saveEquip(k){
+  const name=document.getElementById('eq-name').value.trim();
+  if(!name){showFlash('Bitte Name angeben');return;}
+  const old=k?lsGet(k):{};
+  const ts=k?Number(k.split(':')[1]):Date.now();
+  const data={name,typ:document.getElementById('eq-typ').value,status:document.getElementById('eq-status').value,seriennummer:document.getElementById('eq-sn').value,kaufdatum:document.getElementById('eq-kauf').value,letzteWartung:document.getElementById('eq-lw').value,naechsteWartung:document.getElementById('eq-nw').value,notizen:document.getElementById('eq-notes').value,einsaetze:old.einsaetze||0,verleihCount:old.verleihCount||0,ts};
+  lsSet(k||`eq:${ts}`,data);
+  showFlash(k?'Gespeichert ✓':'Hinzugefügt ✓');
+  renderEquipList();
+}
+
+function showEquip(k){
+  const i=lsGet(k);if(!i)return;
+  const sc=SC[i.status]||'#c9a96e';const sb=SB[i.status]||'#0f1117';
+  const sl=OPTS.eqstatus.find(s=>s[0]===i.status)?.[1]||i.status;
+  document.getElementById('page-equip').innerHTML=`
+    <button onclick="renderEquipList()" class="btn" style="margin-bottom:12px;padding:8px 16px">← Zurück</button>
+    <div style="background:${sb};border:1px solid ${sc}44;border-radius:14px;padding:20px;margin-bottom:12px">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px">
+        <div><div style="font-size:18px;font-weight:600">${escHtml(i.name)}</div><div style="color:#4a5468;font-size:13px;margin-top:2px">${i.typ}</div></div>
+        <span class="tag" style="background:${sc}22;color:${sc}">${sl}</span>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">
+        ${[['🔧 Einsätze',i.einsaetze||0],['↗ Verleih',i.verleihCount||0],['📅 Gekauft',i.kaufdatum||'–'],['🔩 Wartung',i.letzteWartung||'–']].map(([l,v])=>`<div style="background:#0a0c12;border-radius:8px;padding:10px 12px"><div style="font-size:11px;color:#4a5468;margin-bottom:3px">${l}</div><div style="font-size:16px;color:#c9a96e;font-weight:600">${v}</div></div>`).join('')}
+      </div>
+      ${i.naechsteWartung?`<div style="background:#1a1208;border:1px solid #3a2a08;border-radius:8px;padding:10px 12px;margin-bottom:12px"><div style="font-size:11px;color:#c9a06e;letter-spacing:1.2px;text-transform:uppercase;margin-bottom:2px">⚠ Nächste Wartung</div><div style="font-size:14px">${i.naechsteWartung}</div></div>`:''}
+      ${i.notizen?`<div style="font-size:13px;color:#4a5468;line-height:1.6">${escHtml(i.notizen)}</div>`:''}
+    </div>
+    <div class="card" style="margin-bottom:12px">
+      <div style="font-size:10px;color:#c9a96e;letter-spacing:1.8px;text-transform:uppercase;margin-bottom:10px">Status ändern</div>
+      <div style="display:flex;flex-wrap:wrap;gap:8px">
+        ${OPTS.eqstatus.map(s=>`<button onclick="changeEqStatus('${k}','${s[0]}')" style="padding:8px 12px;border-radius:8px;border:1px solid ${i.status===s[0]?SC[s[0]]:'#1e2533'};background:${i.status===s[0]?SB[s[0]]:'#0b0d14'};color:${i.status===s[0]?SC[s[0]]:'#4a5468'};font-size:11px;font-family:Georgia,serif">${s[1]}</button>`).join('')}
+      </div>
+    </div>
+    <button onclick="showEquipForm('${k}')" class="btn-outline" style="margin-bottom:10px">✏ Bearbeiten</button>
+    <button onclick="if(confirm('Wirklich löschen?')){lsDel('${k}');showFlash('Gelöscht');renderEquipList();}" class="btn-danger">Löschen</button>`;
+}
+
+function changeEqStatus(k,ns){
+  const i=lsGet(k);if(!i)return;
+  i.status=ns;
+  if(ns==='im_einsatz')i.einsaetze=(Number(i.einsaetze)||0)+1;
+  if(ns==='verliehen')i.verleihCount=(Number(i.verleihCount)||0)+1;
+  lsSet(k,i);showFlash('Status aktualisiert ✓');showEquip(k);
+}
+
+// ── RECHNUNG ──────────────────────────────────────────────────
+let pendingRechnung=null;
+function renderRechnungList(){
+  const rn=loadAll('rn:');
+  const offen=rn.filter(r=>!r.bezahlt);
+  const bezahlt=rn.filter(r=>r.bezahlt);
+  const gesamtOffen=offen.reduce((s,r)=>s+(Number(r.einzelpreis)||0)*(Number(r.anzahl)||0),0);
+  document.getElementById('page-rechnung').innerHTML=`
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:14px">
+      ${[['🧾','Gesamt',rn.length],['⏳','Offen',offen.length],['💶','Offen €',gesamtOffen+'€']].map(([ic,l,v])=>`<div class="kpi-box" style="padding:12px 8px"><div style="font-size:18px;margin-bottom:2px">${ic}</div><div style="font-size:${l==='Offen €'?'13':'22'}px;font-weight:700;color:${l==='Offen'&&offen.length>0?'#c9a06e':'#c9a96e'}">${v}</div><div style="font-size:9px;color:#4a5468;letter-spacing:1.2px;text-transform:uppercase;margin-top:1px">${l}</div></div>`).join('')}
+    </div>
+    <button onclick="showRechnungForm()" class="btn-outline" style="margin-bottom:14px">+ Neue Rechnung</button>
+    ${rn.length===0?'<div style="text-align:center;padding:40px 20px;color:#4a5468;font-size:13px">Noch keine Rechnungen</div>':''}
+    ${offen.length?`<div style="font-size:10px;color:#c9a06e;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px">Ausstehend (${offen.length})</div>`:''}
+    ${offen.map(r=>{const total=(Number(r.einzelpreis)||0)*(Number(r.anzahl)||0);return`<div class="rechnung-offen" onclick="showRechnung('${r._k}')"><div style="display:flex;justify-content:space-between"><div><div style="color:#c9a96e;font-size:14px;font-weight:600">${escHtml(r.rechnungNr||'–')}</div><div style="color:#4a5468;font-size:12px;margin-top:2px">${escHtml(r.kundeVorname||'')} ${escHtml(r.kundeNachname||'')}</div><div style="color:#2a3a4a;font-size:11px;margin-top:2px">${escHtml(r.leistung)} · ${r.anzahl}×</div></div><div style="text-align:right"><div style="font-size:18px;color:#c9a06e;font-weight:700">${total} €</div><div style="font-size:10px;color:#4a5468;margin-top:2px">${r.datum||''}</div></div></div></div>`;}).join('')}
+    ${bezahlt.length?`<div style="font-size:10px;color:#6e9a6e;letter-spacing:1.5px;text-transform:uppercase;margin:16px 0 8px">Bezahlt (${bezahlt.length})</div>`:''}
+    ${bezahlt.map(r=>{const total=(Number(r.einzelpreis)||0)*(Number(r.anzahl)||0);return`<div class="card" onclick="showRechnung('${r._k}')" style="margin-bottom:8px;cursor:pointer;opacity:0.7"><div style="display:flex;justify-content:space-between;align-items:center"><div><div style="font-size:13px">${escHtml(r.rechnungNr||'–')} · ${escHtml(r.kundeVorname||'')} ${escHtml(r.kundeNachname||'')}</div><div style="color:#4a5468;font-size:11px;margin-top:2px">${escHtml(r.leistung||'')}</div></div><div style="text-align:right"><div style="font-size:14px;color:#6e9a6e;font-weight:600">${total} €</div><span class="tag" style="background:#6e9a6e22;color:#6e9a6e">✓ Bezahlt</span></div></div></div>`;}).join('')}`;
+  if(pendingRechnung){showRechnungForm(null,pendingRechnung);pendingRechnung=null;}
+}
+
+function showRechnungForm(k,preset){
+  const r=k?lsGet(k):(preset||{});
+  const allRn=loadAll('rn:');
+  const autoNr=r.rechnungNr||`SC-${new Date().getFullYear()}-${String(allRn.length+1).padStart(3,'0')}`;
+  const leistung=r.leistung||'Beginner Kurs';
+  const entries=loadAll('sc:').slice(0,10);
+  document.getElementById('page-rechnung').innerHTML=`
+    <button onclick="renderRechnungList()" class="btn" style="margin-bottom:16px;padding:8px 16px">← Zurück</button>
+    <div style="font-size:14px;color:#c9a96e;font-weight:600;margin-bottom:16px">🧾 ${k?'Rechnung bearbeiten':'Neue Rechnung'}</div>
+    ${entries.length?`<div style="background:#0a1020;border:1px solid #1e2533;border-radius:10px;padding:12px;margin-bottom:16px"><div style="font-size:10px;color:#c9a96e;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px">Aus Eintrag übernehmen</div><select id="rn-entry" onchange="applyEntry(this.value)" style="width:100%;background:#0b0d14;border:1px solid #1e2533;border-radius:8px;color:#d4cdc4;padding:10px 12px;font-size:13px;font-family:Georgia,serif"><option value="">-- Eintrag wählen --</option>${entries.map(e=>`<option value="${e._k}">${e.datum} · ${e.ort||'–'} · ${e.wirt||e.wirtschaftlicherWert||'–'}</option>`).join('')}</select></div>`:''}
+    ${fld('rn-nr','Rechnungsnummer',`<input id="rn-nr" value="${escHtml(autoNr)}">`)}
+    ${fld('rn-datum','Datum',`<input type="date" id="rn-datum" value="${r.datum||today()}">`)}
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+      ${fld('rn-vn','Vorname',`<input id="rn-vn" value="${escHtml(r.kundeVorname||'')}" placeholder="Max">`)}
+      ${fld('rn-nn','Nachname *',`<input id="rn-nn" value="${escHtml(r.kundeNachname||'')}" placeholder="Mustermann">`)}
+    </div>
+    ${fld('rn-adr','Adresse',`<input id="rn-adr" value="${escHtml(r.kundeAdresse||'')}" placeholder="Straße, PLZ Ort">`)}
+    ${fld('rn-mail','E-Mail',`<input id="rn-mail" value="${escHtml(r.kundeEmail||'')}" placeholder="mail@...">`)}
+    <div style="background:#0a1020;border:1px solid #1e2533;border-radius:10px;padding:14px;margin-bottom:16px">
+      <div style="font-size:10px;color:#c9a96e;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:12px">Leistung</div>
+      ${fld('rn-lst','Produkt',`<select id="rn-lst" onchange="autoPreis()">${selOpts([...OPTS.wirt,'Sonstige Leistung'],leistung)}</select>`)}
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        ${fld('rn-anz','Anzahl Personen',`<input type="number" id="rn-anz" value="${r.anzahl||1}" min="1" oninput="updateTotal()">`)}
+        ${fld('rn-ep','Preis / Person €',`<input type="number" id="rn-ep" value="${r.einzelpreis||215}" oninput="updateTotal()">`)}
+      </div>
+      <div style="background:#080a10;border-radius:8px;padding:12px;margin-top:4px" id="rn-total-box">
+        <div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid #1e2533"><span style="font-size:12px;color:#4a5468">Netto</span><span id="rn-netto" style="font-size:12px;color:#4a5468">–</span></div>
+        <div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid #1e2533"><span style="font-size:12px;color:#4a5468">MwSt DK 25%</span><span id="rn-mwst" style="font-size:12px;color:#4a5468">–</span></div>
+        <div style="display:flex;justify-content:space-between;padding:4px 0"><span style="font-size:14px;color:#c9a96e;font-weight:600">GESAMT</span><span id="rn-total" style="font-size:14px;color:#c9a96e;font-weight:600">–</span></div>
+      </div>
+    </div>
+    ${fld('rn-zz','Zahlungsziel (Tage)',`<input type="number" id="rn-zz" value="${r.zahlungsziel||14}">`)}
+    ${fld('rn-notiz','Notiz',`<textarea id="rn-notiz" style="min-height:60px" placeholder="z.B. Gruppenrabatt...">${escHtml(r.notizen||'')}</textarea>`)}
+    <div style="display:flex;gap:10px;margin-top:4px">
+      <button onclick="shareRechnung()" style="flex:1;padding:13px;border:1px solid #c9a96e;border-radius:8px;background:#0a1020;color:#c9a96e;font-size:12px;letter-spacing:1px;text-transform:uppercase;font-family:Georgia,serif">↗ Teilen</button>
+      <button onclick="saveRechnung(${k?`'${k}'`:'null'})" style="flex:2;padding:13px;border:none;border-radius:8px;background:linear-gradient(135deg,#c9a96e,#a07840);color:#080a0f;font-size:14px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;font-family:Georgia,serif">💾 Speichern</button>
+    </div>`;
+  setTimeout(updateTotal,50);
+}
+
+function applyEntry(k){if(!k)return;const e=lsGet(k);if(!e)return;const lst=document.getElementById('rn-lst');const ep=document.getElementById('rn-ep');const anz=document.getElementById('rn-anz');const dat=document.getElementById('rn-datum');const wirt=e.wirt||e.wirtschaftlicherWert||'Beginner Kurs';if(lst)Array.from(lst.options).forEach(o=>{o.selected=o.value===wirt||o.text===wirt;});if(ep)ep.value=PREISE[wirt]||215;if(anz)anz.value=e.tn||e.teilnehmerzahl||1;if(dat)dat.value=e.datum||today();updateTotal();}
+function autoPreis(){const lst=document.getElementById('rn-lst');const ep=document.getElementById('rn-ep');if(lst&&ep&&PREISE[lst.value])ep.value=PREISE[lst.value];updateTotal();}
+function updateTotal(){const ep=Number(document.getElementById('rn-ep')?.value)||0;const anz=Number(document.getElementById('rn-anz')?.value)||0;const total=ep*anz;const mwst=Math.round(total*0.25*100)/100;const netto=Math.round(total/1.25*100)/100;const t=document.getElementById('rn-total');const m=document.getElementById('rn-mwst');const n=document.getElementById('rn-netto');if(t)t.textContent=total+' €';if(m)m.textContent=mwst+' €';if(n)n.textContent=netto+' €';}
+
+function saveRechnung(k){
+  const nn=document.getElementById('rn-nn')?.value?.trim();
+  if(!nn){showFlash('Bitte Kundenname angeben');return;}
+  const ts=k?Number(k.split(':')[1]):Date.now();
+  const key=k||`rn:${ts}`;
+  const data={rechnungNr:document.getElementById('rn-nr')?.value||`SC-${new Date().getFullYear()}-001`,datum:document.getElementById('rn-datum')?.value||today(),kundeVorname:document.getElementById('rn-vn')?.value||'',kundeNachname:nn,kundeAdresse:document.getElementById('rn-adr')?.value||'',kundeEmail:document.getElementById('rn-mail')?.value||'',leistung:document.getElementById('rn-lst')?.value||'',anzahl:document.getElementById('rn-anz')?.value||'1',einzelpreis:document.getElementById('rn-ep')?.value||'0',zahlungsziel:document.getElementById('rn-zz')?.value||'14',notizen:document.getElementById('rn-notiz')?.value||'',bezahlt:k?lsGet(k)?.bezahlt||false:false,ts};
+  lsSet(key,data);showFlash('Rechnung gespeichert ✓');renderRechnungList();
+}
+
+function shareRechnung(){
+  const nr=document.getElementById('rn-nr')?.value||'';
+  const ep=Number(document.getElementById('rn-ep')?.value)||0;
+  const anz=Number(document.getElementById('rn-anz')?.value)||0;
+  const total=ep*anz;const mwst=Math.round(total*0.25*100)/100;const netto=Math.round(total/1.25*100)/100;
+  const text=`RECHNUNG / FAKTURA\n${'═'.repeat(36)}\nSurfcamp Bornholm · Bornholm, DK\n${'─'.repeat(36)}\nRechnungsnummer: ${nr}\nDatum: ${document.getElementById('rn-datum')?.value||''}\n${'─'.repeat(36)}\nKUNDE\n${document.getElementById('rn-vn')?.value||''} ${document.getElementById('rn-nn')?.value||''}\n${document.getElementById('rn-adr')?.value||''}\n${'─'.repeat(36)}\nLEISTUNG: ${document.getElementById('rn-lst')?.value||''}\nAnzahl: ${anz}   Preis/Person: ${ep} €\n${'─'.repeat(36)}\nNetto:    ${netto} €\nMwSt 25%: ${mwst} €\nGESAMT:   ${total} €\n${'═'.repeat(36)}\nTak for din booking! 🌊`;
+  shareText(`Rechnung ${nr}`,text);
+}
+
+function showRechnung(k){
+  const r=lsGet(k);if(!r)return;
+  const total=(Number(r.einzelpreis)||0)*(Number(r.anzahl)||0);
+  const mwst=Math.round(total*0.25*100)/100;const netto=Math.round(total/1.25*100)/100;
+  document.getElementById('page-rechnung').innerHTML=`
+    <button onclick="renderRechnungList()" class="btn" style="margin-bottom:12px;padding:8px 16px">← Zurück</button>
+    <div style="background:#0c0f18;border:1px solid ${r.bezahlt?'#2a4a2a':'#3a2a0a'};border-radius:14px;padding:20px;margin-bottom:12px">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px">
+        <div><div style="font-size:16px;color:#c9a96e;font-weight:600">${escHtml(r.rechnungNr||'–')}</div><div style="color:#4a5468;font-size:12px;margin-top:2px">${r.datum||''} · ${escHtml(r.kundeVorname||'')} ${escHtml(r.kundeNachname||'')}</div></div>
+        <span class="tag" style="background:${r.bezahlt?'#162016':'#1a1208'};color:${r.bezahlt?'#6e9a6e':'#c9a06e'}">${r.bezahlt?'✓ Bezahlt':'⏳ Offen'}</span>
+      </div>
+      ${[['Leistung',r.leistung],['Anzahl',r.anzahl+' Person'+(Number(r.anzahl)>1?'en':'')],['Preis/Person',r.einzelpreis+' €'],['Netto',netto+' €'],['MwSt 25%',mwst+' €'],['Gesamt',total+' €']].map(([l,v],i)=>`<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #1e2533"><span style="font-size:12px;color:#4a5468">${l}</span><span style="font-size:${i===5?15:12}px;color:${i===5?'#c9a96e':'#d4cdc4'};font-weight:${i===5?700:400}">${v}</span></div>`).join('')}
+      ${r.notizen?`<div style="font-size:12px;color:#4a5468;margin-top:10px">Notiz: ${escHtml(r.notizen)}</div>`:''}
+    </div>
+    <button onclick="toggleBezahlt('${k}')" style="width:100%;padding:12px;margin-bottom:10px;border:1px solid ${r.bezahlt?'#4a1e1e':'#2a4a2a'};border-radius:8px;background:${r.bezahlt?'#1a0f0f':'#0f1a0f'};color:${r.bezahlt?'#8e4040':'#6e9a6e'};font-size:13px;font-family:Georgia,serif">${r.bezahlt?'↩ Als offen markieren':'✓ Als bezahlt markieren'}</button>
+    <button onclick="shareRechnungObj('${k}')" class="btn-outline" style="margin-bottom:10px">↗ Teilen / Kopieren</button>
+    <button onclick="if(confirm('Wirklich löschen?')){lsDel('${k}');showFlash('Gelöscht');renderRechnungList();}" class="btn-danger">Rechnung löschen</button>`;
+}
+
+function toggleBezahlt(k){const r=lsGet(k);if(!r)return;r.bezahlt=!r.bezahlt;lsSet(k,r);showFlash(r.bezahlt?'Bezahlt ✓':'Als offen markiert');showRechnung(k);}
+function shareRechnungObj(k){const r=lsGet(k);if(!r)return;const total=(Number(r.einzelpreis)||0)*(Number(r.anzahl)||0);const mwst=Math.round(total*0.25*100)/100;const netto=Math.round(total/1.25*100)/100;const text=`RECHNUNG ${r.rechnungNr}\n${'─'.repeat(30)}\n${r.kundeVorname} ${r.kundeNachname}\n${'─'.repeat(30)}\n${r.leistung}\n${r.anzahl}× ${r.einzelpreis} €\nNetto: ${netto} €  MwSt: ${mwst} €\nGESAMT: ${total} €\nStatus: ${r.bezahlt?'✓ BEZAHLT':'⏳ AUSSTEHEND'}\n${'─'.repeat(30)}\nSurfcamp Bornholm 🌊`;shareText(`Rechnung ${r.rechnungNr}`,text);}
+
+async function shareText(title,text){if(navigator.share){try{await navigator.share({title,text});return;}catch{}}try{await navigator.clipboard.writeText(text);showFlash('In Zwischenablage kopiert ✓');}catch{showFlash('Teilen nicht verfügbar');}}
+
+// ── ANALYSE ───────────────────────────────────────────────────
+function renderAnalyse(){
+  const entries=loadAll('sc:');
+  const rn=loadAll('rn:');
+  const el=document.getElementById('page-analyse');
+  if(!entries.length){el.innerHTML=`<div style="text-align:center;padding:60px 20px;color:#4a5468"><div style="font-size:44px;margin-bottom:12px">📊</div><div>Noch keine Daten</div></div>`;return;}
+  const total=entries.length;
+  const avgTN=Math.round(entries.reduce((s,e)=>s+(Number(e.tn||e.teilnehmerzahl)||0),0)/total);
+  const goalRate=Math.round(entries.filter(e=>(e.zielErr||e.zielErreicht)==='ja').length/total*100);
+  const bjarke=entries.filter(e=>(e.who||e.durchfuehrender)==='Bjarke').length;
+  const tino=entries.filter(e=>(e.who||e.durchfuehrender)==='Tino').length;
+  const umsatzGes=entries.reduce((s,e)=>s+(PREISE[e.wirt||e.wirtschaftlicherWert]||0)*Number(e.tn||e.teilnehmerzahl||0),0);
+  const avgUT=total>0?Math.round(umsatzGes/total):0;
+  const rnBezahlt=rn.filter(r=>r.bezahlt).reduce((s,r)=>s+(Number(r.einzelpreis)||0)*(Number(r.anzahl)||0),0);
+
+  // Umsatz pro Produkt
+  const umsatzP=OPTS.wirt.map(w=>{const u=entries.filter(e=>(e.wirt||e.wirtschaftlicherWert)===w).reduce((s,e)=>s+(PREISE[w]||0)*Number(e.tn||e.teilnehmerzahl||0),0);return{name:w,umsatz:u,preis:PREISE[w]};}).filter(x=>x.umsatz>0).sort((a,b)=>b.umsatz-a.umsatz);
+
+  // Energy
+  const energyD=['niedrig','mittel','hoch'].map(v=>({n:v,c:entries.filter(e=>(e.energy||e.energielevel)===v).length})).filter(x=>x.c>0);
+  // Fokus
+  const fokusD=['Sicherheit','Technik','Erlebnis'].map(f=>({n:f,c:entries.filter(e=>e.fokus===f).length})).filter(x=>x.c>0);
+  // Ziel
+  const zielD=[{v:'ja',l:'Erreicht'},{v:'teilweise',l:'Teilweise'},{v:'nein',l:'Nicht erreicht'}].map(x=>({n:x.l,c:entries.filter(e=>(e.zielErr||e.zielErreicht)===x.v).length})).filter(x=>x.c>0);
+
+  const BAR_W=200;
+  function barChart(data,colors){const max=Math.max(...data.map(d=>d.c),1);return`<div style="margin-top:8px">${data.map((d,i)=>`<div style="margin-bottom:10px"><div style="display:flex;justify-content:space-between;margin-bottom:4px"><span style="font-size:12px;color:#d4cdc4">${d.n}</span><span style="font-size:12px;color:${colors[i%colors.length]};font-weight:600">${d.c}×</span></div><div style="background:#1e2533;border-radius:4px;height:5px"><div style="background:${colors[i%colors.length]};border-radius:4px;height:5px;width:${(d.c/max*100)}%"></div></div></div>`).join('')}</div>`;}
+
+  const COLS=['#c9a96e','#4a7c9e','#6e9a6e','#9e6e6e','#8e6ea0','#7eaaa0'];
+
+  el.innerHTML=`
+    <div class="kpi-grid">
+      ${[['🏄','Einheiten',total],['👥','Ø Teilnehmer',avgTN||'–'],['✅','Zielerreichung',goalRate+'%'],['🟡','Bjarke/Tino',bjarke+'/'+tino]].map(([ic,l,v])=>`<div class="kpi-box"><div style="font-size:22px;margin-bottom:4px">${ic}</div><div class="kpi-val">${v}</div><div class="kpi-label">${l}</div></div>`).join('')}
+    </div>
+
+    <div class="umsatz-box">
+      <div style="font-size:10px;letter-spacing:2px;color:#6e9a6e;text-transform:uppercase;margin-bottom:14px">💰 Umsatz Saison</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:16px">
+        ${[['Geschätzt',umsatzGes.toLocaleString('de')+' €'],['Ø / Tag',avgUT+' €'],['Bezahlt',rnBezahlt.toLocaleString('de')+' €']].map(([l,v])=>`<div style="text-align:center"><div style="font-size:15px;font-weight:700;color:#6e9a6e">${v}</div><div style="font-size:9px;color:#4a5468;letter-spacing:1.5px;text-transform:uppercase;margin-top:2px">${l}</div></div>`).join('')}
+      </div>
+      ${umsatzP.map((p,i)=>`<div style="margin-bottom:12px"><div style="display:flex;justify-content:space-between;margin-bottom:5px"><span style="font-size:12px;color:#d4cdc4">${p.name} <span style="font-size:10px;color:#4a5468">${p.preis}€/TN</span></span><span style="font-size:13px;color:#6e9a6e;font-weight:600">${p.umsatz.toLocaleString('de')} €</span></div><div style="background:#1e2533;border-radius:4px;height:5px"><div style="background:linear-gradient(90deg,#4a7a4a,#6e9a6e);border-radius:4px;height:5px;width:${umsatzGes>0?(p.umsatz/umsatzGes*100):0}%"></div></div></div>`).join('')}
+    </div>
+
+    ${energyD.length?`<div class="card" style="margin-bottom:12px"><div style="font-size:11px;letter-spacing:2px;color:#c9a96e;text-transform:uppercase;margin-bottom:8px">Energielevel</div>${barChart(energyD,['#9e6060','#c9a96e','#6e9a6e'])}</div>`:''}
+    ${zielD.length?`<div class="card" style="margin-bottom:12px"><div style="font-size:11px;letter-spacing:2px;color:#c9a96e;text-transform:uppercase;margin-bottom:8px">Zielerreichung</div>${barChart(zielD,COLS)}</div>`:''}
+    ${fokusD.length?`<div class="card" style="margin-bottom:12px"><div style="font-size:11px;letter-spacing:2px;color:#c9a96e;text-transform:uppercase;margin-bottom:8px">Fokus-Verteilung</div>${barChart(fokusD,COLS)}</div>`:''}
+
+    <div class="card">
+      <div style="font-size:10px;letter-spacing:2px;color:#c9a96e;text-transform:uppercase;margin-bottom:10px">Saison exportieren</div>
+      <div style="font-size:12px;color:#4a5468;margin-bottom:12px;line-height:1.6">Alle ${total} Einträge als Excel-CSV.</div>
+      <button onclick="exportCSV()" class="btn-outline">⬇ CSV herunterladen</button>
+    </div>`;
+}
+
+function exportCSV(){
+  const entries=loadAll('sc:');
+  const headers=['Datum','Spot','Durchführender','Teilnehmer','Zielgruppe','Wind','Hauptziel','Ziel erreicht','Stimmung','Produkt','Umsatz'];
+  const rows=entries.map(e=>[e.datum,e.ort,e.who||e.durchfuehrender||e.durchgefuehrtVon,e.tn||e.teilnehmerzahl,e.zg||e.zielgruppe,e.wind,e.hauptziel,e.zielErr||e.zielErreicht,e.stimmung,e.wirt||e.wirtschaftlicherWert,(PREISE[e.wirt||e.wirtschaftlicherWert]||0)*Number(e.tn||e.teilnehmerzahl||0)].map(v=>`"${String(v||'').replace(/"/g,'""')}"`));
+  const csv=[headers.join(','),...rows.map(r=>r.join(','))].join('\n');
+  const blob=new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8;'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');a.href=url;a.download='surfcamp-saison.csv';a.click();URL.revokeObjectURL(url);
+}
+
+// ── Init ──────────────────────────────────────────────────────
+initFormData();
+curSec=0;
+renderSec();
+initSchnell();
+</script>
+</body>
+</html>
