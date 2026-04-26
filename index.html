@@ -332,17 +332,22 @@ function saveEntry(){
     durchgefuehrt: formData.who,
     teilnehmer: formData.tn,
     zielgruppe: formData.zg,
+    geschlecht: formData.geschlecht,
+    alter: formData.alter,
     kursart: formData.wirt,
     wind: formData.wind,
     wellen: formData.wellen,
     temperatur: formData.temperatur,
+    sicht: formData.sicht,
     stimmung: formData.stimmung,
     ziel: formData.zielErr,
     lernfortschritt: formData.lernfort,
     feedback: formData.feedback,
+    momente: formData.momente,
+    probleme: formData.probleme,
+    wirtschaftlicherWert: formData.wirt,
     notizen: formData.intern
   });
-
   showFlash('Eintrag gespeichert ✓');
   initFormData();curSec=0;renderSec();
   setTimeout(()=>switchTab('log'),500);
@@ -364,30 +369,29 @@ function saveSchnell(){
   lsSet(`sc:${d.ts}`,d);
 
 saveToGoogleSheet({
-  sheet: "Doku",
-  datum: formData.datum,
-  uhrzeit: formData.uhrzeit,
-  spot: formData.ort,
-  durchgefuehrt: formData.who,
-  teilnehmer: formData.tn,
-  zielgruppe: formData.zg,
-  geschlecht: formData.geschlecht,
-  alter: formData.alter,
-  kursart: formData.wirt,
-  wind: formData.wind,
-  wellen: formData.wellen,
-  temperatur: formData.temperatur,
-  sicht: formData.sicht,
-  stimmung: formData.stimmung,
-  ziel: formData.zielErr,
-  lernfortschritt: formData.lernfort,
-  feedback: formData.feedback,
-  momente: formData.momente,
-  probleme: formData.probleme,
-  wirtschaftlicherWert: formData.wirt,
-  notizen: formData.intern
-});
-
+    sheet: "Doku",
+    datum: d.datum,
+    uhrzeit: "",
+    spot: d.ort,
+    durchgefuehrt: d.who,
+    teilnehmer: d.tn,
+    zielgruppe: "",
+    geschlecht: "",
+    alter: "",
+    kursart: d.wirt,
+    wind: d.wind,
+    wellen: "",
+    temperatur: "",
+    sicht: "",
+    stimmung: d.stimmung,
+    ziel: d.zielErr,
+    lernfortschritt: "",
+    feedback: "",
+    momente: "",
+    probleme: "",
+    wirtschaftlicherWert: d.wirt,
+    notizen: "Schnelleintrag"
+  });
   showFlash('Schnelleintrag gespeichert ✓');
   document.getElementById('s-datum').value=today();
   document.getElementById('s-tn').value='';
@@ -529,6 +533,11 @@ saveToGoogleSheet({
   notizen: data.notizen
 });
 
+
+  showFlash(k?'Gespeichert ✓':'Hinzugefügt ✓');
+  renderEquipList();
+}
+
 function showEquip(k){
   const i=lsGet(k);if(!i)return;
   const sc=SC[i.status]||'#c9a96e';const sb=SB[i.status]||'#0f1117';
@@ -650,6 +659,9 @@ saveToGoogleSheet({
 
 showFlash('Rechnung gespeichert ✓');
 renderRechnungList();
+
+
+}
 
 function shareRechnung(){
   const nr=document.getElementById('rn-nr')?.value||'';
