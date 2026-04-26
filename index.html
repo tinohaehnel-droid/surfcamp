@@ -519,9 +519,15 @@ function saveEquip(k){
   const ts=k?Number(k.split(':')[1]):Date.now();
   const data={name,typ:document.getElementById('eq-typ').value,status:document.getElementById('eq-status').value,seriennummer:document.getElementById('eq-sn').value,kaufdatum:document.getElementById('eq-kauf').value,letzteWartung:document.getElementById('eq-lw').value,naechsteWartung:document.getElementById('eq-nw').value,notizen:document.getElementById('eq-notes').value,einsaetze:old.einsaetze||0,verleihCount:old.verleihCount||0,ts};
   lsSet(k||`eq:${ts}`,data);
-  showFlash(k?'Gespeichert ✓':'Hinzugefügt ✓');
-  renderEquipList();
-}
+saveToGoogleSheet({
+  sheet: "Equipment",
+  name: data.name,
+  typ: data.typ,
+  status: data.status,
+  einsaetze: data.einsaetze,
+  letzteWartung: data.letzteWartung,
+  notizen: data.notizen
+});
 
 function showEquip(k){
   const i=lsGet(k);if(!i)return;
