@@ -634,8 +634,22 @@ function saveRechnung(k){
   const ts=k?Number(k.split(':')[1]):Date.now();
   const key=k||`rn:${ts}`;
   const data={rechnungNr:document.getElementById('rn-nr')?.value||`SC-${new Date().getFullYear()}-001`,datum:document.getElementById('rn-datum')?.value||today(),kundeVorname:document.getElementById('rn-vn')?.value||'',kundeNachname:nn,kundeAdresse:document.getElementById('rn-adr')?.value||'',kundeEmail:document.getElementById('rn-mail')?.value||'',leistung:document.getElementById('rn-lst')?.value||'',anzahl:document.getElementById('rn-anz')?.value||'1',einzelpreis:document.getElementById('rn-ep')?.value||'0',zahlungsziel:document.getElementById('rn-zz')?.value||'14',notizen:document.getElementById('rn-notiz')?.value||'',bezahlt:k?lsGet(k)?.bezahlt||false:false,ts};
-  lsSet(key,data);showFlash('Rechnung gespeichert ✓');renderRechnungList();
-}
+lsSet(key,data);
+
+saveToGoogleSheet({
+  sheet: "Einnahmen",
+  datum: data.datum,
+  leistung: data.leistung,
+  teilnehmer: data.anzahl,
+  preis: data.einzelpreis,
+  gesamt: Number(data.anzahl) * Number(data.einzelpreis),
+  durchgefuehrt: "",
+  zahlungsart: "",
+  notizen: data.notizen
+});
+
+showFlash('Rechnung gespeichert ✓');
+renderRechnungList();
 
 function shareRechnung(){
   const nr=document.getElementById('rn-nr')?.value||'';
