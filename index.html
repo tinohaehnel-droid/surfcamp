@@ -589,7 +589,7 @@ function renderRechnungList(){
   const gesamtOffen=offen.reduce((s,r)=>s+(Number(r.einzelpreis)||0)*(Number(r.anzahl)||0),0);
   document.getElementById('page-rechnung').innerHTML=`
     <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:14px">
-      ${[['🧾','Gesamt',rn.length],['⏳','Offen',offen.length],['💶','Offen', gesamtOffen + 'DKK']].map(([ic,l,v])=>`<div class="kpi-box" style="padding:12px 8px"><div style="font-size:18px;margin-bottom:2px">${ic}</div><div style="font-size:${l==='Offen DKK'?'13':'22'}px;font-weight:700;color:${l==='Offen'&&offen.length>0?'#c9a06e':'#c9a96e'}">${v}</div><div style="font-size:9px;color:#4a5468;letter-spacing:1.2px;text-transform:uppercase;margin-top:1px">${l}</div></div>`).join('')}
+      ${[['🧾','Gesamt',rn.length],['⏳','Offen',offen.length],['💶','Offen (DKK)', gesamtOffen + 'DKK']].map(([ic,l,v])=>`<div class="kpi-box" style="padding:12px 8px"><div style="font-size:18px;margin-bottom:2px">${ic}</div><div style="font-size:${l==='Offen DKK'?'13':'22'}px;font-weight:700;color:${l==='Offen'&&offen.length>0?'#c9a06e':'#c9a96e'}">${v}</div><div style="font-size:9px;color:#4a5468;letter-spacing:1.2px;text-transform:uppercase;margin-top:1px">${l}</div></div>`).join('')}
     </div>
     <button onclick="showRechnungForm()" class="btn-outline" style="margin-bottom:14px">+ Neue Rechnung</button>
     ${rn.length===0?'<div style="text-align:center;padding:40px 20px;color:#4a5468;font-size:13px">Noch keine Rechnungen</div>':''}
