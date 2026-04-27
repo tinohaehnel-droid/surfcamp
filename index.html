@@ -132,9 +132,8 @@ async function saveToGoogleSheet(data) {
       mode: "no-cors",
       body: JSON.stringify(data)
     });
-    console.log("Gesendet an Google Sheet");
   } catch (err) {
-    console.error("Fehler:", err);
+    console.error("Sheet Fehler:", err);
   }
 }
 
