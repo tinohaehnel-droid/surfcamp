@@ -642,7 +642,7 @@ function showRechnungForm(k,preset){
 
 function applyEntry(k){if(!k)return;const e=lsGet(k);if(!e)return;const lst=document.getElementById('rn-lst');const ep=document.getElementById('rn-ep');const anz=document.getElementById('rn-anz');const dat=document.getElementById('rn-datum');const wirt=e.wirt||e.wirtschaftlicherWert||'Beginner Kurs';if(lst)Array.from(lst.options).forEach(o=>{o.selected=o.value===wirt||o.text===wirt;});if(ep)ep.value=PREISE[wirt]||215;if(anz)anz.value=e.tn||e.teilnehmerzahl||1;if(dat)dat.value=e.datum||today();updateTotal();}
 function autoPreis(){const lst=document.getElementById('rn-lst');const ep=document.getElementById('rn-ep');if(lst&&ep&&PREISE[lst.value])ep.value=PREISE[lst.value];updateTotal();}
-function updateTotal(){const ep=Number(document.getElementById('rn-ep')?.value)||0;const anz=Number(document.getElementById('rn-anz')?.value)||0;const total=ep*anz;const mwst=Math.round(total*0.25*100)/100;const netto=Math.round(total/1.25*100)/100;const t=document.getElementById('rn-total');const m=document.getElementById('rn-mwst');const n=document.getElementById('rn-netto');if(t)t.textContent=total+' €';if(m)m.textContent=mwst+' €';if(n)n.textContent=netto+' €';}
+function updateTotal(){const ep=Number(document.getElementById('rn-ep')?.value)||0;const anz=Number(document.getElementById('rn-anz')?.value)||0;const total=ep*anz;const mwst=Math.round(total*0.25*100)/100;const netto=Math.round(total/1.25*100)/100;const t=document.getElementById('rn-total');const m=document.getElementById('rn-mwst');const n=document.getElementById('rn-netto');if(t)t.textContent=total+' DKK';if(m)m.textContent=mwst+' DKK';if(n)n.textContent=netto+' DKK';}
 
 function saveRechnung() {
 
