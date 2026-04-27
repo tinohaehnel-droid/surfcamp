@@ -323,30 +323,24 @@ function saveEntry(){
   const ts=Date.now();
   lsSet(`sc:${ts}`,{...formData,ts});
 
-  saveToGoogleSheet({
-    sheet: "Doku",
-    datum: formData.datum,
-    uhrzeit: formData.uhrzeit,
-    spot: formData.ort,
-    durchgefuehrt: formData.who,
-    teilnehmer: formData.tn,
-    zielgruppe: formData.zg,
-    geschlecht: formData.geschlecht,
-    alter: formData.alter,
-    kursart: formData.wirt,
-    wind: formData.wind,
-    wellen: formData.wellen,
-    temperatur: formData.temperatur,
-    sicht: formData.sicht,
-    stimmung: formData.stimmung,
-    ziel: formData.zielErr,
-    lernfortschritt: formData.lernfort,
-    feedback: formData.feedback,
-    momente: formData.momente,
-    probleme: formData.probleme,
-    wirtschaftlicherWert: formData.wirt,
-    notizen: formData.intern
-  });
+saveToGoogleSheet({
+  sheet: "Doku",
+
+  datum: formData.datum,
+  spot: formData.ort,
+  durchgefuehrt: formData.who,
+  teilnehmer: formData.tn,
+
+  kursart: formData.wirt,
+  wind: formData.wind,
+  stimmung: formData.stimmung,
+
+  ziel: formData.zielErr,
+  lernfortschritt: formData.lernfort,
+
+  wirtschaft: formData.wirt,
+  notizen: formData.intern
+});
 
   showFlash('Eintrag gespeichert ✓');
   initFormData();curSec=0;renderSec();
