@@ -680,7 +680,7 @@ function shareRechnung(){
   const ep=Number(document.getElementById('rn-ep')?.value)||0;
   const anz=Number(document.getElementById('rn-anz')?.value)||0;
   const total=ep*anz;const mwst=Math.round(total*0.25*100)/100;const netto=Math.round(total/1.25*100)/100;
-  const text=`RECHNUNG / FAKTURA\n${'═'.repeat(36)}\nSurfcamp Bornholm · Bornholm, DK\n${'─'.repeat(36)}\nRechnungsnummer: ${nr}\nDatum: ${document.getElementById('rn-datum')?.value||''}\n${'─'.repeat(36)}\nKUNDE\n${document.getElementById('rn-vn')?.value||''} ${document.getElementById('rn-nn')?.value||''}\n${document.getElementById('rn-adr')?.value||''}\n${'─'.repeat(36)}\nLEISTUNG: ${document.getElementById('rn-lst')?.value||''}\nAnzahl: ${anz}   Preis/Person: ${ep} €\n${'─'.repeat(36)}\nNetto:    ${netto} €\nMwSt 25%: ${mwst} €\nGESAMT:   ${total} €\n${'═'.repeat(36)}\nTak for din booking! 🌊`;
+  const text=`RECHNUNG / FAKTURA\n${'═'.repeat(36)}\nSurfcamp Bornholm · Bornholm, DK\n${'─'.repeat(36)}\nRechnungsnummer: ${nr}\nDatum: ${document.getElementById('rn-datum')?.value||''}\n${'─'.repeat(36)}\nKUNDE\n${document.getElementById('rn-vn')?.value||''} ${document.getElementById('rn-nn')?.value||''}\n${document.getElementById('rn-adr')?.value||''}\n${'─'.repeat(36)}\nLEISTUNG: ${document.getElementById('rn-lst')?.value||''}\nAnzahl: ${anz}   Preis/Person: ${ep} €\n${'─'.repeat(36)}\nNetto:    ${netto} DKK\nMwSt 25%: ${mwst} DKK\nGESAMT:   ${total} DKK\n${'═'.repeat(36)}\nTak for din booking! 🌊`;
   shareText(`Rechnung ${nr}`,text);
 }
 
